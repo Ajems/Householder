@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_activity"
+    app:startDestination="@id/shoppingFragment">
+
+    <fragment
+        android:id="@+id/shoppingFragment"
+        android:name="com.example.householder.activity.shoppingFragment"
+        android:label="fragment_shopping"
+        tools:layout="@layout/fragment_shopping" />
+    <fragment
+        android:id="@+id/coockingFragment"
+        android:name="com.example.householder.coockingFragment"
+        android:label="fragment_coocking"
+        tools:layout="@layout/fragment_coocking" />
+    <fragment
+        android:id="@+id/productsFragment"
+        android:name="com.example.householder.productsFragment"
+        android:label="fragment_products"
+        tools:layout="@layout/fragment_products" />
+
+    <fragment
+        android:id="@+id/walletFragment"
+        android:name="com.example.householder.activity.walletFragment"
+        android:label="fragment_wallet"
+        tools:layout="@layout/fragment_wallet" />
+
+</navigation>

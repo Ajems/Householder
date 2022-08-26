@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Householder</string>
+    <string name="shoping">Shoping</string>
+    <string name="coocking">Coocking</string>
+    <string name="products">Products</string>
+    <string name="wallet">Wallet</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
