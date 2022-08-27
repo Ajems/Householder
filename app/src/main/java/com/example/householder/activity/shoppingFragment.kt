@@ -22,15 +22,13 @@ import com.google.android.material.textfield.TextInputEditText
 
 class shoppingFragment : Fragment() {
 
-    private var productArr = arrayListOf<Product>()
+    //private var productArr = arrayListOf<Product>()
     private val productViewModel: ProductViewModel by lazy {
         ViewModelProviders.of(this).get(ProductViewModel::class.java)
     }
-    private var adapter = ProductAdapter(productArr)
+    private var adapter = ProductAdapter()
     private lateinit var _binding: FragmentShoppingBinding
     private val binding get() = _binding
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +46,6 @@ class shoppingFragment : Fragment() {
     }
 
     fun updateUI(productArr: ArrayList<Product>){
-        adapter = ProductAdapter(productArr)
         binding.shopingList.adapter = adapter
     }
 
@@ -56,8 +53,9 @@ class shoppingFragment : Fragment() {
         private val binding = ProductItemBinding.bind(view)
         private lateinit var product: Product
 
-        fun bind(product: Product, productArr: ArrayList<Product>){
-            this.product = product
+        @SuppressLint("SetTextI18n")
+        fun bind(index: Int, productArr: ArrayList<Product>){
+            this.product = productArr[index]
             binding.name.text = product.name
             binding.count.text = product.count.toString()
 
@@ -65,10 +63,9 @@ class shoppingFragment : Fragment() {
                 binding.count.text = ((binding.count.text as String).toInt()-1).toString()
                 product.count-=1
                 if (product.count == 0){
-                    //binding.item.maxHeight = 0
                     productViewModel.delProduct(product)
-                    productArr.removeAt(productArr.indexOf(product))
-                    updateUI(productArr)
+                    //productArr.removeAt(productArr.indexOf(product))
+                    updateUI(productViewModel.productArr)
             }
 
             binding.add.setOnClickListener {
@@ -78,7 +75,7 @@ class shoppingFragment : Fragment() {
     }
     }
 
-    private inner class ProductAdapter(var productArr: ArrayList<Product>):
+    private inner class ProductAdapter():
         RecyclerView.Adapter<ProductHolder>(){
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductHolder {
@@ -87,32 +84,32 @@ class shoppingFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ProductHolder, position: Int) {
-            holder.bind(productArr[position], productArr)
+            holder.bind(position, productViewModel.productArr)
         }
 
         fun addProduct(product: Product){
-            productArr.add(0, product)
+            productViewModel.productArr.add(0, product)
             notifyDataSetChanged()
         }
 
         @SuppressLint("NotifyDataSetChanged")
         fun delProductIndex(position: Int){
-            productArr.removeAt(position)
+            productViewModel.productArr.removeAt(position)
             notifyDataSetChanged()
         }
 
         fun delProductName(name: String){
             //TODO оптимизировать 26.08.22
-            delProductIndex(productArr.indexOf(productArr.find{ it.name == name}))
+            delProductIndex(productViewModel.productArr.indexOf(productViewModel.productArr.find{ it.name == name}))
         }
 
         fun isEmpty(): Boolean{
-            return productArr.isEmpty()
+            return productViewModel.productArr.isEmpty()
         }
 
 
         override fun getItemCount(): Int {
-            return productArr.size
+            return productViewModel.productArr.size
         }
 
     }
@@ -171,18 +168,15 @@ class shoppingFragment : Fragment() {
             val count = productCount.text.toString().toInt()
             if (name != "" && count > 0) {
                 val newProduct = Product(name, count)
-                adapter.addProduct(newProduct)
                 productViewModel.addProduct(newProduct)
+                updateUI(productViewModel.productArr)
             }
         }
     }
 
     override fun onStart() {
         super.onStart()
-        if (adapter.isEmpty()) {
-            for (product in productViewModel.getProduct())
-                adapter.addProduct(product)
-        }
+        if (adapter.isEmpty()) productViewModel.getProduct().forEach {adapter.addProduct(it) }
     }
 
     override fun onPause() {

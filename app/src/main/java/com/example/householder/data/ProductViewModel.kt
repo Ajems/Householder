@@ -4,20 +4,20 @@ import androidx.lifecycle.ViewModel
 
 class ProductViewModel: ViewModel() {
 
-    var productsArr = ArrayList<Product>()
+    var productArr = ArrayList<Product>()
     private var total = 0
 
     fun getProduct(): ArrayList<Product> {
-        return productsArr
+        return productArr
     }
 
     fun addProduct(product: Product){
-        productsArr.add(product)
+        productArr.add(product)
         total++
     }
 
     fun delProduct(product: Product){
-        productsArr.removeAt(productsArr.indexOf(product))
+        productArr.removeAt(productArr.indexOf(product))
         total--
     }
 
