@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:fontFamily="@font/roboto_medium"
-        android:text="Название продукта"
+        android:text="Product's name"
         android:textColor="?attr/colorSecondary"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -89,13 +89,12 @@
         android:id="@+id/button_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_weight="1"
+        android:layout_marginHorizontal="32dp"
         android:background="@android:color/transparent"
         android:fontFamily="@font/roboto_medium"
-        android:text="ОТМЕНИТЬ"
+        android:text="cancel"
         android:textColor="?attr/colorSecondary"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/button_apply"
         app:layout_constraintTop_toTopOf="@+id/button_apply" />
 
@@ -103,14 +102,14 @@
         android:id="@+id/button_apply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="18dp"
         android:layout_marginEnd="18dp"
         android:background="@android:color/transparent"
         android:fontFamily="@font/roboto_medium"
-        android:text="ПРИНЯТЬ"
+        android:text="apply"
         android:textColor="?attr/colorSecondary"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/scrollView3" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

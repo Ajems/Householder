@@ -7,17 +7,15 @@
     tools:context=".productsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:textColor="@android:color/black"
-            android:textSize="32sp"
-            android:text="Скучаю\n✨❤✨" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:text="@string/wallet" />
+    </FrameLayout>
 
 </FrameLayout>

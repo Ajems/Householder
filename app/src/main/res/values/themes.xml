@@ -16,6 +16,7 @@
         <item name="colorOnBackground">#bcedde</item>
 
         <item name="colorSurface">#79dbbd</item>
+        <item name="colorOnSurface">#000000</item>
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
         <item name="android:navigationBarColor">?attr/colorSurface</item>
