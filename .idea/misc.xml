@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/drawable/dialog_layout.xml" value="0.252" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.315" />
         <entry key="app/src/main/res/drawable/item_oval.xml" value="0.1245" />
+        <entry key="app/src/main/res/drawable/item_oval_big.xml" value="0.2135" />
         <entry key="app/src/main/res/drawable/products.xml" value="0.146" />
         <entry key="app/src/main/res/drawable/remove.xml" value="0.1825" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
@@ -21,7 +22,9 @@
         <entry key="app/src/main/res/layout/fragment_products.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_shopping.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_wallet.xml" value="0.35885416666666664" />
-        <entry key="app/src/main/res/layout/product_item.xml" value="0.20527306967984935" />
+        <entry key="app/src/main/res/layout/product_item.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/product_item_line.xml" value="0.23645833333333333" />
+        <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.35885416666666664" />
         <entry key="app/src/main/res/menu/menu.xml" value="0.1" />
       </map>
     </option>

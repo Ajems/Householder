@@ -11,6 +11,8 @@
         <item name="colorSecondaryVariant">#f3954f</item>
         <item name="colorSecondaryContainer">?attr/colorPrimary</item>
         <item name="colorOnSecondary">#ffffff</item>
+        <item name="backgroundColor">#e8f9f4</item>
+        <item name="colorSurface">#21c392</item>
 
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->

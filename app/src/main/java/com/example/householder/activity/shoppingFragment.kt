@@ -2,13 +2,15 @@ package com.example.householder.activity
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import android.widget.*
+import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +20,9 @@ import com.example.householder.data.ProductViewModel
 import com.example.householder.databinding.FragmentShoppingBinding
 import com.example.householder.databinding.ProductItemBinding
 import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 
 
 class shoppingFragment : Fragment() {
@@ -42,6 +47,8 @@ class shoppingFragment : Fragment() {
             addProduct()
         }
 
+        if (!isDarkModeOn()) activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
         return binding.root
     }
 
@@ -54,8 +61,8 @@ class shoppingFragment : Fragment() {
         private lateinit var product: Product
 
         @SuppressLint("SetTextI18n")
-        fun bind(index: Int, productArr: ArrayList<Product>){
-            this.product = productArr[index]
+        fun bind(index: Int){
+            this.product = productViewModel.getProduct(index)
             binding.name.text = product.name
             binding.count.text = product.count.toString()
 
@@ -64,8 +71,7 @@ class shoppingFragment : Fragment() {
                 binding.count.text = product.count.toString()
                 if (product.count == 0) {
                     productViewModel.delProduct(product)
-                    //productArr.removeAt(productArr.indexOf(product))
-                    updateUI(productViewModel.productArr)
+                    updateUI(productViewModel.getProductArr())
                 }
             }
 
@@ -85,32 +91,33 @@ class shoppingFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ProductHolder, position: Int) {
-            holder.bind(position, productViewModel.productArr)
+            holder.bind(position)
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         fun addProduct(product: Product){
-            productViewModel.productArr.add(0, product)
+            productViewModel.addProduct(product)
             notifyDataSetChanged()
         }
 
         @SuppressLint("NotifyDataSetChanged")
         fun delProductIndex(position: Int){
-            productViewModel.productArr.removeAt(position)
+            productViewModel.delProductIndex(position)
             notifyDataSetChanged()
         }
 
         fun delProductName(name: String){
             //TODO оптимизировать 26.08.22
-            delProductIndex(productViewModel.productArr.indexOf(productViewModel.productArr.find{ it.name == name}))
+            delProductName(name)
         }
 
         fun isEmpty(): Boolean{
-            return productViewModel.productArr.isEmpty()
+            return productViewModel.isEmpty()
         }
 
 
         override fun getItemCount(): Int {
-            return productViewModel.productArr.size
+            return productViewModel.arrSize()
         }
 
     }
@@ -170,17 +177,51 @@ class shoppingFragment : Fragment() {
             if (name != "" && count > 0) {
                 val newProduct = Product(name, count)
                 productViewModel.addProduct(newProduct)
-                updateUI(productViewModel.productArr)
+                updateUI(productViewModel.getProductArr())
             }
         }
     }
 
     override fun onStart() {
         super.onStart()
-        if (adapter.isEmpty()) productViewModel.getProduct().forEach {adapter.addProduct(it) }
+        loadData()
+        if (adapter.isEmpty()) productViewModel.getProductArr().forEach {adapter.addProduct(it) }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        saveData()
+        super.onStop()
     }
+
+    @SuppressLint("CommitPrefEdits")
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    private fun saveData(){
+        val sharedPreferences = requireActivity().getSharedPreferences("shared preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val json = gson.toJson(productViewModel.getProductArr())
+        editor.putString("product list", json)
+        editor.apply()
+    }
+
+    private fun loadData(){
+        val sharedPreferences = requireActivity().getSharedPreferences("shared preferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPreferences.getString("product list", null)
+        val type: Type = object: TypeToken<ArrayList<Product>>(){}.type
+        val productArr = gson.fromJson<ArrayList<Product>>(json, type)
+
+        if (productArr == null) productViewModel.setProductArr(ArrayList<Product>())
+        else if(productArr.size > 0) productViewModel.setProductArr(productArr)
+        else productViewModel.setProductArr(arrayListOf<Product>())
+    }
+
+    private fun isDarkModeOn(): Boolean {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+    }
+
 }
