@@ -3,6 +3,7 @@ package com.example.householder.activity
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Color
@@ -12,6 +13,7 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -81,6 +83,27 @@ class shoppingFragment : Fragment() {
                 product.count++
                 binding.count.text = product.count.toString()
             }
+
+            binding.name.setOnLongClickListener{
+                //Toast.makeText(activity, "Long click ${product.name}", Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(activity)
+                builder.setTitle("Deleting a product")
+                    .setMessage("Are you sure you want to remove the ${product.name} from the shopping list?")
+                    .setPositiveButton("ok"){dialog, which ->
+                        productViewModel.delProduct(product)
+                        updateUI(productViewModel.getProductArr())
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("cancel"){dialog, which ->
+                        dialog.dismiss()
+                    }
+
+                val dialog = builder.create()
+                dialog.show()
+
+                true
+            }
+
         }
     }
 

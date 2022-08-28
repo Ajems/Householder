@@ -10,7 +10,7 @@
     android:background="@drawable/item_oval_big">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/item_oval"
@@ -32,6 +32,7 @@
             android:textSize="24sp" />
 
         <LinearLayout
+            android:id="@+id/data"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="6dp">
