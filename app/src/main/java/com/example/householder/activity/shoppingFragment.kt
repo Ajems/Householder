@@ -60,19 +60,20 @@ class shoppingFragment : Fragment() {
             binding.count.text = product.count.toString()
 
             binding.remove.setOnClickListener {
-                binding.count.text = ((binding.count.text as String).toInt()-1).toString()
-                product.count-=1
-                if (product.count == 0){
+                product.count -= 1
+                binding.count.text = product.count.toString()
+                if (product.count == 0) {
                     productViewModel.delProduct(product)
                     //productArr.removeAt(productArr.indexOf(product))
                     updateUI(productViewModel.productArr)
+                }
             }
 
             binding.add.setOnClickListener {
-                binding.count.text = ((binding.count.text as String).toInt()+1).toString()
+                product.count++
+                binding.count.text = product.count.toString()
             }
         }
-    }
     }
 
     private inner class ProductAdapter():
