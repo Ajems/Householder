@@ -2,6 +2,7 @@ package com.example.householder
 
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
@@ -30,6 +31,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        val typedValue = TypedValue()
+        theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
+        binding.bottomNavigation.setBackgroundColor(typedValue.data)
+
 
         binding.bottomNavigation.setOnItemSelectedListener {
             when(it.itemId) {

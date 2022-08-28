@@ -5,6 +5,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -130,6 +132,7 @@ class shoppingFragment : Fragment() {
             .setView(dialogView)
         val alertDialog = builder.create()
         alertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
 
         val inputName = alertDialog.findViewById<TextInputEditText>(R.id.product_name_filed)
