@@ -3,9 +3,6 @@ package com.example.householder.activity
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
-import android.content.res.Configuration
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -13,7 +10,6 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +19,7 @@ import com.example.householder.data.Product
 import com.example.householder.data.ProductViewModel
 import com.example.householder.databinding.FragmentShoppingBinding
 import com.example.householder.databinding.ProductItemBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -31,11 +28,11 @@ import java.lang.reflect.Type
 
 class shoppingFragment : Fragment() {
 
-    //private var productArr = arrayListOf<Product>()
-    private val productViewModel: ProductViewModel by lazy {
+    private val shoppingViewModel: ProductViewModel by lazy {
         ViewModelProviders.of(this).get(ProductViewModel::class.java)
     }
-    private var adapter = ProductAdapter()
+    private val shoppingArr = ArrayList<Product>()
+    private var adapter = ShoppingAdapter()
     private lateinit var _binding: FragmentShoppingBinding
     private val binding get() = _binding
 
@@ -45,19 +42,12 @@ class shoppingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentShoppingBinding.inflate(inflater, container, false)
-        binding.shopingList.layoutManager = LinearLayoutManager(this.context)
-        binding.shopingList.adapter = adapter
+        binding.shoppingList.layoutManager = LinearLayoutManager(this.context)
+        binding.shoppingList.adapter = adapter
         binding.buttonAdd.setOnClickListener {
             addProduct()
         }
-
-        if (!isDarkModeOn()) activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-
         return binding.root
-    }
-
-    fun updateUI(productArr: ArrayList<Product>){
-        binding.shopingList.adapter = adapter
     }
 
     private inner class ProductHolder(view: View) : RecyclerView.ViewHolder(view){
@@ -66,16 +56,16 @@ class shoppingFragment : Fragment() {
 
         @SuppressLint("SetTextI18n")
         fun bind(index: Int){
-            this.product = productViewModel.getProduct(index)
+            this.product = shoppingViewModel.getProduct(index)
             binding.name.text = product.name
             binding.count.text = product.count.toString()
 
             binding.remove.setOnClickListener {
-                product.count -= 1
-                binding.count.text = product.count.toString()
-                if (product.count == 0) {
-                    productViewModel.delProduct(product)
-                    updateUI(productViewModel.getProductArr())
+                if (product.count == 1){
+                    dialogDeleting(product, adapterPosition)
+                } else {
+                    product.count--
+                    binding.count.text = product.count.toString()
                 }
             }
 
@@ -85,29 +75,14 @@ class shoppingFragment : Fragment() {
             }
 
             binding.name.setOnLongClickListener{
-                //Toast.makeText(activity, "Long click ${product.name}", Toast.LENGTH_SHORT).show()
-                val builder = AlertDialog.Builder(activity)
-                builder.setTitle("Deleting a product")
-                    .setMessage("Are you sure you want to remove the ${product.name} from the shopping list?")
-                    .setPositiveButton("ok"){dialog, which ->
-                        productViewModel.delProduct(product)
-                        updateUI(productViewModel.getProductArr())
-                        dialog.dismiss()
-                    }
-                    .setNegativeButton("cancel"){dialog, which ->
-                        dialog.dismiss()
-                    }
-
-                val dialog = builder.create()
-                dialog.show()
-
+                dialogDeleting(product, adapterPosition)
                 true
             }
 
         }
     }
 
-    private inner class ProductAdapter():
+    private inner class ShoppingAdapter():
         RecyclerView.Adapter<ProductHolder>(){
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductHolder {
@@ -121,28 +96,35 @@ class shoppingFragment : Fragment() {
 
         @SuppressLint("NotifyDataSetChanged")
         fun addProduct(product: Product){
-            productViewModel.addProduct(product)
+            shoppingArr.add(0, product)
+            shoppingViewModel.addProduct(product)
             notifyDataSetChanged()
         }
 
         @SuppressLint("NotifyDataSetChanged")
-        fun delProductIndex(position: Int){
-            productViewModel.delProductIndex(position)
-            notifyDataSetChanged()
+        fun getProductIndex(index: Int): Product{
+            return shoppingArr[index]
         }
 
-        fun delProductName(name: String){
-            //TODO оптимизировать 26.08.22
-            delProductName(name)
+        fun delProduct(product: Product){
+            shoppingArr.remove(product)
+            shoppingViewModel.delProduct(product)
         }
 
         fun isEmpty(): Boolean{
-            return productViewModel.isEmpty()
+            return shoppingArr.isEmpty()
         }
 
+        fun setArr(arr: ArrayList<Product>){
+            arr.forEach { shoppingArr.add(it) }
+        }
+
+        fun arrSize(): Int{
+            return shoppingArr.size
+        }
 
         override fun getItemCount(): Int {
-            return productViewModel.arrSize()
+            return shoppingArr.size
         }
 
     }
@@ -198,12 +180,12 @@ class shoppingFragment : Fragment() {
 
     private fun initProduct(productName: EditText, productCount: EditText) {
         if (!productName.text.isNullOrEmpty() && !productCount.text.isNullOrEmpty()) {
-            val name = productName.text.toString()
+            val name = productName.text.toString().trim()
             val count = productCount.text.toString().toInt()
             if (name != "" && count > 0) {
                 val newProduct = Product(name, count)
-                productViewModel.addProduct(newProduct)
-                updateUI(productViewModel.getProductArr())
+                adapter.addProduct(newProduct)
+                adapter.notifyItemInserted(adapter.arrSize()-1)
             }
         }
     }
@@ -211,43 +193,53 @@ class shoppingFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         loadData()
-        if (adapter.isEmpty()) productViewModel.getProductArr().forEach {adapter.addProduct(it) }
-    }
+        if (adapter.isEmpty()) { adapter.setArr(shoppingViewModel.getProductArr()) }    }
 
     override fun onStop() {
         saveData()
         super.onStop()
     }
 
-    @SuppressLint("CommitPrefEdits")
-    override fun onDestroy() {
-        super.onDestroy()
+
+    private fun dialogDeleting(product: Product, position: Int){
+        activity?.let { it1 ->
+            MaterialAlertDialogBuilder(it1)
+                .setTitle("Deleting a product")
+                .setMessage("Are you sure you want to remove ${product.count} ${if(product.count > 1) "${product.name}\'s" else product.name} from the shopping list?")
+                .setPositiveButton("Ok"){dialog, which ->
+                    adapter.delProduct(product)
+                    adapter.notifyItemRemoved(position)
+                }
+                .setNegativeButton("Cancel"){dialog, which ->
+                }
+                .setNeutralButton("Bought") { dialog, which ->
+                    adapter.delProduct(product)
+                    adapter.notifyItemRemoved(position)
+                    //TODO product to product list
+                }.show()
+        }
     }
 
     private fun saveData(){
         val sharedPreferences = requireActivity().getSharedPreferences("shared preferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val gson = Gson()
-        val json = gson.toJson(productViewModel.getProductArr())
-        editor.putString("product list", json)
+        val json = gson.toJson(shoppingViewModel.getProductArr())
+        editor.putString("shopping list", json)
         editor.apply()
     }
 
     private fun loadData(){
         val sharedPreferences = requireActivity().getSharedPreferences("shared preferences", Context.MODE_PRIVATE)
         val gson = Gson()
-        val json = sharedPreferences.getString("product list", null)
+        val json = sharedPreferences.getString("shopping list", null)
         val type: Type = object: TypeToken<ArrayList<Product>>(){}.type
         val productArr = gson.fromJson<ArrayList<Product>>(json, type)
 
-        if (productArr == null) productViewModel.setProductArr(ArrayList<Product>())
-        else if(productArr.size > 0) productViewModel.setProductArr(productArr)
-        else productViewModel.setProductArr(arrayListOf<Product>())
+        if (productArr == null) shoppingViewModel.setProductArr(ArrayList<Product>())
+        else if(productArr.size > 0) shoppingViewModel.setProductArr(productArr)
+        else shoppingViewModel.setProductArr(arrayListOf<Product>())
     }
 
-    private fun isDarkModeOn(): Boolean {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
-    }
 
 }

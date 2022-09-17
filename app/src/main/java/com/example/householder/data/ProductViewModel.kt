@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 class ProductViewModel: ViewModel() {
 
     private var productArr = ArrayList<Product>()
-    private var total = 0
 
     fun getProductArr(): ArrayList<Product> {
         return productArr
@@ -13,22 +12,19 @@ class ProductViewModel: ViewModel() {
 
     fun setProductArr(productArr: ArrayList<Product>){
         this.productArr = ArrayList<Product>()
-        productArr.forEach { addProduct(it) }
+        productArr.forEach { addProduct(it, arrSize()) }
     }
 
-    fun addProduct(product: Product){
-        productArr.add(product)
-        total++
+    fun addProduct(product: Product, index: Int = 0){
+        productArr.add(index, product)
     }
 
     fun delProductIndex(index: Int){
         productArr.removeAt(index)
-        total--
     }
 
     fun delProduct(product: Product){
-        delProductIndex(productArr.indexOf(product))
-        total--
+        productArr.remove(product)
     }
 
     fun isEmpty(): Boolean{
@@ -42,6 +38,4 @@ class ProductViewModel: ViewModel() {
     fun getProduct(index: Int): Product{
         return productArr[index]
     }
-
-
 }

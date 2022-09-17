@@ -9,6 +9,7 @@
     android:layout_margin="6dp"
     android:background="@drawable/item_oval_big">
 
+
     <LinearLayout
         android:id="@+id/body"
         android:layout_width="match_parent"
@@ -33,25 +34,27 @@
 
         <LinearLayout
             android:id="@+id/data"
+            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="6dp">
+            android:layout_margin="8dp">
 
             <ImageButton
                 android:id="@+id/remove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="center_vertical"
                 android:background="@android:color/transparent"
                 android:padding="6dp"
                 android:src="@drawable/remove" />
 
             <TextView
                 android:id="@+id/count"
+                android:minWidth="48dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight="1"
+                android:gravity="center"
                 android:text="TextView"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="18sp"
@@ -61,14 +64,25 @@
                 android:id="@+id/add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="center_vertical"
                 android:background="@android:color/transparent"
                 android:padding="6dp"
                 android:src="@drawable/add" />
 
         </LinearLayout>
 
-
     </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="12/12/12"
+        android:textSize="10sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/body" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
