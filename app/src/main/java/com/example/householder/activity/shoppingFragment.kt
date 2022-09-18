@@ -31,7 +31,6 @@ class shoppingFragment : Fragment() {
     private val shoppingViewModel: ProductViewModel by lazy {
         ViewModelProviders.of(this).get(ProductViewModel::class.java)
     }
-    private val shoppingArr = ArrayList<Product>()
     private var adapter = ShoppingAdapter()
     private lateinit var _binding: FragmentShoppingBinding
     private val binding get() = _binding
@@ -45,7 +44,7 @@ class shoppingFragment : Fragment() {
         binding.shoppingList.layoutManager = LinearLayoutManager(this.context)
         binding.shoppingList.adapter = adapter
         binding.buttonAdd.setOnClickListener {
-            addProduct()
+            dialogAddProduct()
         }
         return binding.root
     }
@@ -82,8 +81,9 @@ class shoppingFragment : Fragment() {
         }
     }
 
-    private inner class ShoppingAdapter():
-        RecyclerView.Adapter<ProductHolder>(){
+    private inner class ShoppingAdapter(): RecyclerView.Adapter<ProductHolder>(){
+
+        private val shoppingArr = ArrayList<Product>()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.product_item, parent, false)
@@ -95,28 +95,51 @@ class shoppingFragment : Fragment() {
         }
 
         @SuppressLint("NotifyDataSetChanged")
-        fun addProduct(product: Product){
-            shoppingArr.add(0, product)
-            shoppingViewModel.addProduct(product)
-            notifyDataSetChanged()
+        fun addProduct(product: Product, index: Int = 0){
+            shoppingArr.add(index, product)
+            shoppingViewModel.addProduct(product, index)
+            notifyItemInserted(index)
+        }
+
+        fun delProduct(product: Product){
+            val index = shoppingArr.indexOf(product)
+            shoppingArr.remove(product)
+            shoppingViewModel.delProduct(product)
+            notifyItemRemoved(index)
+        }
+
+        fun delProductIndex(index: Int){
+            shoppingArr.removeAt(index)
+            shoppingViewModel.delProductIndex(index)
+            notifyItemRemoved(index)
+        }
+
+        fun setAdapterArr(arr: ArrayList<Product>){
+            arr.forEach { shoppingArr.add(it) }
         }
 
         @SuppressLint("NotifyDataSetChanged")
+        fun summarizeProduct(product: Product){
+            shoppingArr.forEach {
+                if(it.name == product.name){
+                    it.count+=product.count
+                    adapter.notifyDataSetChanged()
+                    return
+                }
+            }
+            shoppingViewModel.summarizeProduct(product)
+        }
+
         fun getProductIndex(index: Int): Product{
             return shoppingArr[index]
         }
 
-        fun delProduct(product: Product){
-            shoppingArr.remove(product)
-            shoppingViewModel.delProduct(product)
+        fun isProductInArr(product: Product): Boolean{
+            return shoppingArr.find { it.name == product.name } != null
         }
 
         fun isEmpty(): Boolean{
             return shoppingArr.isEmpty()
-        }
-
-        fun setArr(arr: ArrayList<Product>){
-            arr.forEach { shoppingArr.add(it) }
         }
 
         fun arrSize(): Int{
@@ -131,7 +154,7 @@ class shoppingFragment : Fragment() {
 
 
     @SuppressLint("CutPasteId")
-    private fun addProduct() {
+    private fun dialogAddProduct() {
         val dialogView = LayoutInflater.from(activity).inflate(R.layout.add_product_dialog, null)
         val builder = AlertDialog.Builder(activity)
             .setView(dialogView)
@@ -184,20 +207,11 @@ class shoppingFragment : Fragment() {
             val count = productCount.text.toString().toInt()
             if (name != "" && count > 0) {
                 val newProduct = Product(name, count)
-                adapter.addProduct(newProduct)
-                adapter.notifyItemInserted(adapter.arrSize()-1)
+                if(adapter.isProductInArr(newProduct)){
+                    dialogAddSameProduct(newProduct)
+                } else adapter.addProduct(newProduct)
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        loadData()
-        if (adapter.isEmpty()) { adapter.setArr(shoppingViewModel.getProductArr()) }    }
-
-    override fun onStop() {
-        saveData()
-        super.onStop()
     }
 
 
@@ -208,7 +222,6 @@ class shoppingFragment : Fragment() {
                 .setMessage("Are you sure you want to remove ${product.count} ${if(product.count > 1) "${product.name}\'s" else product.name} from the shopping list?")
                 .setPositiveButton("Ok"){dialog, which ->
                     adapter.delProduct(product)
-                    adapter.notifyItemRemoved(position)
                 }
                 .setNegativeButton("Cancel"){dialog, which ->
                 }
@@ -218,6 +231,32 @@ class shoppingFragment : Fragment() {
                     //TODO product to product list
                 }.show()
         }
+    }
+
+    private fun dialogAddSameProduct(product: Product){
+        activity?.let { it ->
+            MaterialAlertDialogBuilder(it)
+                .setTitle("Same product")
+                .setMessage(getString(R.string.alreadyExistName))
+                .setPositiveButton("Summarize"){ dialog, which ->
+                    adapter.summarizeProduct(product)
+                }
+                .setNeutralButton("Add new"){dialog, which ->
+                    adapter.addProduct(product)
+                }
+                .setNegativeButton("Cancel"){dialog, which ->}
+                .show()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        loadData()
+        if (adapter.isEmpty()) { adapter.setAdapterArr(shoppingViewModel.getProductArr()) }    }
+
+    override fun onStop() {
+        saveData()
+        super.onStop()
     }
 
     private fun saveData(){

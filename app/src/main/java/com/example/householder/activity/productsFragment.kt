@@ -103,7 +103,7 @@ class productsFragment  : Fragment() {
 
         @SuppressLint("NotifyDataSetChanged")
         fun addProduct(product: Product, index: Int = 0){
-            productArr.firstOrNull { it.name == product.name }
+            //productArr.firstOrNull { it.name == product.name }
             productArr.add(index, product)
             productViewModel.addProduct(product, index)
             notifyItemInserted(index)
@@ -209,7 +209,7 @@ class productsFragment  : Fragment() {
 
     private fun initProduct(productName: EditText, productCount: EditText) {
         if (!productName.text.isNullOrEmpty() && !productCount.text.isNullOrEmpty()) {
-            val name = productName.text.toString()
+            val name = productName.text.toString().trim()
             val count = productCount.text.toString().toInt()
             if (name != "" && count > 0) {
                 val newProduct = Product(name, count)
@@ -261,11 +261,6 @@ class productsFragment  : Fragment() {
     override fun onStop() {
         saveData()
         super.onStop()
-    }
-
-    @SuppressLint("CommitPrefEdits")
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     private fun saveData(){
