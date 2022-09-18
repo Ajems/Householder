@@ -15,7 +15,7 @@
         android:layout_margin="16dp"
         android:fontFamily="@font/roboto_medium"
         android:text="Product's name"
-        android:textColor="?attr/colorSecondary"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:textColorHint="@android:color/transparent"
-                app:boxBackgroundColor="?attr/colorOnPrimary"
+                app:boxBackgroundColor="?attr/backgroundColor"
                 app:layout_constraintEnd_toEndOf="@+id/title_new_project_dialog"
                 app:layout_constraintStart_toStartOf="@+id/title_new_project_dialog"
                 app:layout_constraintTop_toBottomOf="@+id/title_new_project_dialog">
@@ -53,7 +53,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionNext"
-                    android:textColor="?attr/colorSecondary" />
+                    android:textColor="?attr/colorOnSurface" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,7 +65,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
                 android:textColorHint="@android:color/transparent"
-                app:boxBackgroundColor="?attr/colorOnPrimary"
+                app:boxBackgroundColor="?attr/backgroundColor"
                 app:layout_constraintEnd_toEndOf="@+id/title_new_project_dialog"
                 app:layout_constraintStart_toStartOf="@+id/title_new_project_dialog"
                 app:layout_constraintTop_toBottomOf="@+id/product_name">
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
                     android:inputType="number"
-                    android:textColor="?attr/colorSecondary" />
+                    android:textColor="?attr/colorOnSurface" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,7 +93,7 @@
         android:background="@android:color/transparent"
         android:fontFamily="@font/roboto_medium"
         android:text="cancel"
-        android:textColor="?attr/colorSecondary"
+        android:textColor="?attr/colorPrimary"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/button_apply"
         app:layout_constraintTop_toTopOf="@+id/button_apply" />
@@ -107,7 +107,7 @@
         android:background="@android:color/transparent"
         android:fontFamily="@font/roboto_medium"
         android:text="apply"
-        android:textColor="?attr/colorSecondary"
+        android:textColor="?attr/colorPrimary"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

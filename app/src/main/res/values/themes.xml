@@ -12,16 +12,16 @@
         <item name="colorSecondaryContainer">?attr/colorPrimary</item>
         <item name="colorOnSecondary">#000000</item>
 
+        <item name="colorAccent">#79dbbd</item>
+        <item name="android:navigationBarColor">?attr/colorAccent</item>
+
+
         <item name="backgroundColor">#e8f9f4</item>
         <item name="colorOnBackground">#bcedde</item>
 
-        <item name="colorSurface">#79dbbd</item>
+        <item name="colorSurface">#e8f9f4</item>
         <item name="colorOnSurface">#000000</item>
-        <!-- Status bar color. -->
-        <!-- Customize your theme here. -->
-        <item name="android:navigationBarColor">?attr/colorSurface</item>
 
-        <!-- Optional: set to transparent if your app is drawing behind the status bar. -->
         <item name="android:statusBarColor">
             @android:color/transparent
         </item>

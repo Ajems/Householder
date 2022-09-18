@@ -4,7 +4,7 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">#21c392</item>
         <item name="colorPrimaryVariant">?attr/colorPrimary</item>
-        <item name="colorOnPrimary">#0a3a2c</item>
+        <item name="colorOnPrimary">#106149</item>
         <item name="colorPrimaryDark">#102027</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">#FF6C00</item>
@@ -12,16 +12,16 @@
         <item name="colorSecondaryContainer">?attr/colorPrimary</item>
         <item name="colorOnSecondary">#ffffff</item>
 
+        <item name="colorAccent">#178866</item>
+        <item name="android:navigationBarColor">?attr/colorAccent</item>
+
+
         <item name="backgroundColor">#093a2b</item>
         <item name="colorOnBackground">#106149</item>
 
-        <item name="colorSurface">#178866</item>
+        <item name="colorSurface">#093a2b</item>
         <item name="colorOnSurface">#ffffff</item>
-        <!-- Status bar color. -->
-        <!-- Customize your theme here. -->
-        <item name="android:navigationBarColor">?attr/colorSurface</item>
 
-        <!-- Optional: set to transparent if your app is drawing behind the status bar. -->
         <item name="android:statusBarColor">
             @android:color/transparent
         </item>

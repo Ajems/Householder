@@ -34,27 +34,25 @@
 
         <LinearLayout
             android:id="@+id/data"
-            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="8dp">
+            android:layout_margin="6dp">
 
             <ImageButton
                 android:id="@+id/remove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center"
                 android:background="@android:color/transparent"
                 android:padding="6dp"
                 android:src="@drawable/remove" />
 
             <TextView
                 android:id="@+id/count"
-                android:minWidth="48dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="center"
+                android:layout_weight="1"
                 android:text="TextView"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="18sp"
@@ -64,7 +62,7 @@
                 android:id="@+id/add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center"
                 android:background="@android:color/transparent"
                 android:padding="6dp"
                 android:src="@drawable/add" />
@@ -75,7 +73,7 @@
 
 
     <TextView
-        android:id="@+id/time"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="12/12/12"

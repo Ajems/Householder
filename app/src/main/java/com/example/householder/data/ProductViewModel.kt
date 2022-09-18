@@ -19,6 +19,15 @@ class ProductViewModel: ViewModel() {
         productArr.add(index, product)
     }
 
+    fun summarizeProduct(product: Product){
+        productArr.forEach {
+            if(it.name == product.name){
+                it.count+=product.count
+                return
+            }
+        }
+    }
+
     fun delProductIndex(index: Int){
         productArr.removeAt(index)
     }

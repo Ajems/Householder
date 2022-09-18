@@ -3,7 +3,6 @@ package com.example.householder
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -19,14 +18,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.householder.data.Product
 import com.example.householder.data.ProductViewModel
 import com.example.householder.databinding.FragmentProductsBinding
-import com.example.householder.databinding.FragmentShoppingBinding
 import com.example.householder.databinding.ProductItemBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
-import java.time.format.DateTimeFormatter
 
 
 class productsFragment  : Fragment() {
@@ -35,7 +32,6 @@ class productsFragment  : Fragment() {
     private val productViewModel: ProductViewModel by lazy {
         ViewModelProviders.of(this).get(ProductViewModel::class.java)
     }
-    private val productArr = ArrayList<Product>()
     private var adapter = ProductAdapter()
     private lateinit var _binding: FragmentProductsBinding
     private val binding get() = _binding
@@ -49,7 +45,7 @@ class productsFragment  : Fragment() {
         binding.productList.layoutManager = LinearLayoutManager(this.context)
         binding.productList.adapter = adapter
         binding.buttonAdd.setOnClickListener {
-            addProduct()
+            dialogAddProduct()
         }
         return binding.root
     }
@@ -65,11 +61,9 @@ class productsFragment  : Fragment() {
             this.product = adapter.getProductIndex(index)
             binding.name.text = product.name
             binding.count.text = product.count.toString()
-            //binding.time.text = product.time.format(DateTimeFormatter.ofPattern("HH:mm dd-mm-yy"))
 
             binding.remove.setOnClickListener {
                 if (product.count == 1){
-                    val size = adapter.arrSize()
                     dialogDeleting(product, adapterPosition)
                 } else {
                     product.count--
@@ -77,9 +71,9 @@ class productsFragment  : Fragment() {
                 }
             }
 
-            binding.name.setOnClickListener{
-                addProduct(product.name, product.count, index)
-            }
+            //binding.name.setOnClickListener{
+            //    addProduct(product.name, product.count, index)
+            //}
 
             binding.add.setOnClickListener {
                 product.count++
@@ -87,7 +81,6 @@ class productsFragment  : Fragment() {
             }
 
             binding.name.setOnLongClickListener{
-                val size = adapter.arrSize()
                 dialogDeleting(product, adapterPosition)
                 true
             }
@@ -95,8 +88,9 @@ class productsFragment  : Fragment() {
         }
     }
 
-    private inner class ProductAdapter():
-        RecyclerView.Adapter<ProductHolder>(){
+    private inner class ProductAdapter(): RecyclerView.Adapter<ProductHolder>(){
+
+        private val productArr = ArrayList<Product>()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.product_item, parent, false)
@@ -109,69 +103,64 @@ class productsFragment  : Fragment() {
 
         @SuppressLint("NotifyDataSetChanged")
         fun addProduct(product: Product, index: Int = 0){
-            productArr.add(adapter.arrSize() - 1, product)
-            productViewModel.addProduct(product)
-            notifyItemInserted(adapter.arrSize() - 1)
+            productArr.firstOrNull { it.name == product.name }
+            productArr.add(index, product)
+            productViewModel.addProduct(product, index)
+            notifyItemInserted(index)
         }
 
-        fun addProductIndex(product: Product, index: Int = 0){
-            productArr.add(index, product)
-            productViewModel.addProduct(product)
-            notifyItemInserted(index)
+        fun delProduct(product: Product){
+            val index = productArr.indexOf(product)
+            productArr.remove(product)
+            productViewModel.delProduct(product)
+            notifyItemRemoved(index)
+        }
+
+        fun delProductIndex(index: Int){
+            productArr.removeAt(index)
+            productViewModel.delProductIndex(index)
+            notifyItemRemoved(index)
+        }
+
+        fun setAdapterArr(arr: ArrayList<Product>){
+            arr.forEach { productArr.add(it) }
+        }
+
+        @SuppressLint("NotifyDataSetChanged")
+        fun summarizeProduct(product: Product){
+            productArr.forEach {
+                if(it.name == product.name){
+                    it.count+=product.count
+                    adapter.notifyDataSetChanged()
+                    return
+                }
+            }
+            productViewModel.summarizeProduct(product)
         }
 
         fun getProductIndex(index: Int): Product{
             return productArr[index]
         }
 
-        fun delProduct(product: Product){
-            productArr.remove(product)
-            productViewModel.delProduct(product)
+        fun isProductInArr(product: Product):Boolean{
+            return productArr.find {it.name == product.name} != null
         }
 
         fun isEmpty(): Boolean{
             return productArr.isEmpty()
         }
 
-        fun setArr(arr: ArrayList<Product>){
-            arr.forEach { productArr.add(it) }
-        }
-
         fun arrSize(): Int{
             return productArr.size
-        }
-
-        fun delProductIndex(index: Int){
-            productArr.removeAt(index)
-            adapter.notifyItemRemoved(index)
-            productViewModel.delProductIndex(index)
         }
 
         override fun getItemCount(): Int {
             return productArr.size
         }
-
     }
-
-    private fun dialogDeleting(product: Product, position: Int){
-        activity?.let { it1 ->
-            MaterialAlertDialogBuilder(it1)
-                .setTitle("Deleting a product")
-                .setMessage("Are you sure you want to remove ${product.count} ${if(product.count > 1) "${product.name}\'s" else product.name} from the product list?")
-                .setPositiveButton("Ok"){dialog, which ->
-                    adapter.delProduct(product)
-                    adapter.notifyItemRemoved(position)
-                }
-                .setNegativeButton("Cancel"){dialog, which ->
-
-                }
-                .show()
-        }
-    }
-
 
     @SuppressLint("CutPasteId")
-    private fun addProduct(name: String = "", count: Int = 0, index: Int = -1) {
+    private fun dialogAddProduct() {
         val dialogView = LayoutInflater.from(activity).inflate(R.layout.add_product_dialog, null)
         val builder = AlertDialog.Builder(activity)
             .setView(dialogView)
@@ -182,10 +171,6 @@ class productsFragment  : Fragment() {
 
         val inputName = alertDialog.findViewById<TextInputEditText>(R.id.product_name_filed)
         val inputCount = alertDialog.findViewById<TextInputEditText>(R.id.product_count_field)
-        if (name != ""){
-            inputName.setText(name)
-            inputCount.setText(count.toString())
-        }
         inputName.requestFocus()
 
 
@@ -205,7 +190,7 @@ class productsFragment  : Fragment() {
                     alertDialog.dismiss()
                     val productName = alertDialog.findViewById<EditText>(R.id.product_name_filed)
                     val productCount = alertDialog.findViewById<EditText>(R.id.product_count_field)
-                    initProduct(productName, productCount, index)
+                    initProduct(productName, productCount)
                     return@OnEditorActionListener true
                 }
                 false
@@ -214,7 +199,7 @@ class productsFragment  : Fragment() {
 
         alertDialog.findViewById<TextView>(R.id.button_apply).setOnClickListener {
             alertDialog.dismiss()
-            initProduct(inputName, inputCount, index)
+            initProduct(inputName, inputCount)
         }
 
         alertDialog.findViewById<TextView>(R.id.button_cancel).setOnClickListener {
@@ -222,26 +207,55 @@ class productsFragment  : Fragment() {
         }
     }
 
-    private fun initProduct(productName: EditText, productCount: EditText, index: Int = -1) {
+    private fun initProduct(productName: EditText, productCount: EditText) {
         if (!productName.text.isNullOrEmpty() && !productCount.text.isNullOrEmpty()) {
             val name = productName.text.toString()
             val count = productCount.text.toString().toInt()
             if (name != "" && count > 0) {
                 val newProduct = Product(name, count)
-                if (index > -1){
-                    adapter.delProductIndex(index)
-                    adapter.addProductIndex(newProduct, index)
-                }else {
-                    adapter.addProductIndex(newProduct)
-                }
+                if(adapter.isProductInArr(newProduct)){
+                    dialogAddSameProduct(newProduct)
+                } else adapter.addProduct(newProduct)
             }
+        }
+    }
+
+
+    private fun dialogDeleting(product: Product, position: Int){
+        activity?.let { it1 ->
+            MaterialAlertDialogBuilder(it1)
+                .setTitle("Deleting a product")
+                .setMessage("Are you sure you want to remove ${product.count} ${if(product.count > 1) "${product.name}\'s" else product.name} from the product list?")
+                .setPositiveButton("Ok"){dialog, which ->
+                    adapter.delProduct(product)
+                }
+                .setNegativeButton("Cancel"){dialog, which ->
+
+                }
+                .show()
+        }
+    }
+
+    private fun dialogAddSameProduct(product: Product){
+        activity?.let { it ->
+            MaterialAlertDialogBuilder(it)
+                .setTitle("Same product")
+                .setMessage(getString(R.string.alreadyExistName))
+                .setPositiveButton("Summarize"){ dialog, which ->
+                    adapter.summarizeProduct(product)
+                }
+                .setNeutralButton("Add new"){dialog, which ->
+                    adapter.addProduct(product)
+                }
+                .setNegativeButton("Cancel"){dialog, which ->}
+                .show()
         }
     }
 
     override fun onStart() {
         super.onStart()
         loadData()
-        if (adapter.isEmpty()) { adapter.setArr(productViewModel.getProductArr()) }
+        if (adapter.isEmpty()) { adapter.setAdapterArr(productViewModel.getProductArr()) }
     }
 
     override fun onStop() {

@@ -1,12 +1,14 @@
 package com.example.householder
 
+import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.example.householder.activity.shoppingFragment
 import com.example.householder.activity.walletFragment
 import com.example.householder.data.ProductViewModel
@@ -20,20 +22,17 @@ class MainActivity : AppCompatActivity() {
     private val PrductsFragment = productsFragment()
     private val WalletFragment = walletFragment()
 
-    private val productViewModel: ProductViewModel by lazy{
-        ViewModelProvider(this).get(ProductViewModel::class.java)
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (!isDarkModeOn()) window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
 
         val typedValue = TypedValue()
-        theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
+        theme.resolveAttribute(com.google.android.material.R.attr.colorAccent, typedValue, true)
         binding.bottomNavigation.setBackgroundColor(typedValue.data)
 
 
@@ -68,6 +67,11 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(R.id.fragmentView, fragment)
             .commit()
+    }
+
+    private fun isDarkModeOn(): Boolean {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
     }
 
 }
