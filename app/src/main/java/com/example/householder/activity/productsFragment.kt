@@ -28,7 +28,6 @@ import java.lang.reflect.Type
 
 class productsFragment  : Fragment() {
 
-    //private var productArr = arrayListOf<Product>()
     private val productViewModel: ProductViewModel by lazy {
         ViewModelProviders.of(this).get(ProductViewModel::class.java)
     }
@@ -49,8 +48,6 @@ class productsFragment  : Fragment() {
         }
         return binding.root
     }
-
-
 
     private inner class ProductHolder(view: View) : RecyclerView.ViewHolder(view){
         private val binding = ProductItemBinding.bind(view)

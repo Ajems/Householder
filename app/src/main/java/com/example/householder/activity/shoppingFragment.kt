@@ -55,7 +55,7 @@ class shoppingFragment : Fragment() {
 
         @SuppressLint("SetTextI18n")
         fun bind(index: Int){
-            this.product = shoppingViewModel.getProduct(index)
+            this.product = adapter.getProductIndex(index)
             binding.name.text = product.name
             binding.count.text = product.count.toString()
 
@@ -227,7 +227,6 @@ class shoppingFragment : Fragment() {
                 }
                 .setNeutralButton("Bought") { dialog, which ->
                     adapter.delProduct(product)
-                    adapter.notifyItemRemoved(position)
                     //TODO product to product list
                 }.show()
         }

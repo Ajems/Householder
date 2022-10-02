@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Householder" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@android:color/system_accent1_200</item>
+        <item name="colorPrimaryVariant">?attr/colorPrimary</item>
+        <item name="colorOnPrimary">@android:color/system_accent1_800</item>
+        <item name="colorPrimaryDark">#102027</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#FF6C00</item>
+        <item name="colorSecondaryVariant">#f3954f</item>
+        <item name="colorSecondaryContainer">?attr/colorPrimary</item>
+        <item name="colorOnSecondary">#ffffff</item>
+
+        <item name="colorAccent">@android:color/system_accent1_600</item>
+        <item name="android:navigationBarColor">?attr/colorAccent</item>
+
+
+        <item name="backgroundColor">@android:color/system_accent1_800</item>
+        <item name="colorOnBackground">@android:color/system_accent1_600</item>
+
+        <!--dialog window background-->
+        <item name="colorSurface">@android:color/system_accent1_700</item>
+        <item name="colorOnSurface">#ffffff</item>
+
+        <item name="android:statusBarColor">
+            @android:color/transparent
+        </item>
+    </style>
+</resources>
