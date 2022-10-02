@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/shoping"
+        android:enabled="true"
+        android:icon="@drawable/cart"
+        android:title="@string/shoping"/>
+    <item
+        android:id="@+id/products"
+        android:enabled="true"
+        android:icon="@drawable/products"
+        android:title="@string/products"/>
+</menu>

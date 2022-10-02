@@ -32,7 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:labelVisibilityMode="labeled"
         app:itemRippleColor="?attr/colorOnPrimary"
-        app:menu="@menu/bottom_navigation_menu">
+        app:menu="@menu/bottom_navigation_menu_products_only">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
